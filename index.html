@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selda | Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #050505;
+      --surface: #0d0d0d;
+      --card: #111111;
+      --border: rgba(255,255,255,0.06);
+      --gold: #c9a84c;
+      --gold-light: #e8c87a;
+      --gold-dim: rgba(201,168,76,0.15);
+      --white: #f0ede8;
+      --muted: #888;
+      --glow: rgba(201,168,76,0.12);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px;
+      background: rgba(5,5,5,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+
+    nav a:hover { color: var(--gold); }
+    nav a:hover::after { width: 100%; }
+
+    /* ─── HEADER ─── */
+    header {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* radial glow behind title */
+    header::after {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 9vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s forwards;
+    }
+
+    header h1 em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    #typing {
+      margin-top: 22px;
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+      min-height: 1.5em;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 1s 1.4s forwards;
+    }
+
+    .scroll-hint span {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 100px 20px;
+      max-width: 1000px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .section-label span {
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 40px;
+    }
+
+    /* ─── ABOUT ─── */
+    #about p {
+      font-size: 1.05rem;
+      color: #b0a99e;
+      line-height: 1.8;
+      max-width: 680px;
+      font-weight: 300;
+    }
+
+    /* ─── SKILLS ─── */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .skill {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      transition: all 0.3s;
+      background: var(--card);
+    }
+
+    .skill:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    /* ─── CARDS ─── */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 28px 24px;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .card:hover { background: #161616; }
+    .card:hover::before { opacity: 1; }
+
+    .card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ─── CERT CARD (standalone) ─── */
+    .cert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .cert-list .card { padding: 24px 28px; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      margin-right: 8px;
+      padding: 7px 16px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.3);
+      background: transparent;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    /* ─── CONTACT ─── */
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── RESUME ─── */
+    #resume { text-align: center; }
+
+    .resume-inner {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 50px 60px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--card);
+    }
+
+    .resume-inner p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 32px;
+      border-radius: 40px;
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(201,168,76,0.25);
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 auto;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 32px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      z-index: 1;
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: #444;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    footer span { color: var(--gold); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── CURSOR DOT ─── */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--gold);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* ─── SKILL SECTION HEADER ─── */
+    .skills-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 44px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#certifications">Certifications</a>
+  <a href="#resume">Resume</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<header>
+  <p class="hero-eyebrow">Portfolio · 2026</p>
+  <h1>Hi, I'm <em>Selda</em> 👋</h1>
+  <p id="typing"></p>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<section id="about">
+  <div class="section-label"><span>About</span></div>
+  <h2>Crafting meaningful<br>digital experiences</h2>
+  <p>I'm Selda, a Computer Science (Data Science) student at MACE passionate about building clean and useful tech.</p>
+
+  <p class="skills-label">Technical Skills</p>
+  <div class="skills-grid">
+    <div class="skill">HTML</div>
+    <div class="skill">CSS</div>
+    <div class="skill">JavaScript</div>
+    <div class="skill">React</div>
+    <div class="skill">Python</div>
+    <div class="skill">C</div>
+    <div class="skill">Java</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="projects">
+  <div class="section-label"><span>Work</span></div>
+  <h2>Selected Projects</h2>
+  <div class="projects">
+
+    <div class="card">
+      <h3>Digital Footprint Visualizer</h3>
+      <p>Analyzes how traceable a username is across platforms using public data.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/digital-footprint-visualizer.git" target="_blank">GitHub</a>
+      <a class="btn" href="https://digital-footprint-visualizer.onrender.com/" target="_blank">Live ↗</a>
+    </div>
+
+    <div class="card">
+      <h3>Smart To-Do List</h3>
+      <p>Organize tasks intelligently using priority scoring and deadline-based sorting.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/TO-DO-LIST.git" target="_blank">GitHub</a>
+    </div>
+
+    <div class="card">
+      <h3>FoodClose</h3>
+      <p>A web app that helps people discover surplus food at discounted prices.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/foodclose.git" target="_blank">GitHub</a>
+      <a class="btn" href="https://foodclose-rd5liy8g1-selda-treesas-projects.vercel.app/" target="_blank">Live ↗</a>
+    </div>
+
+    <div class="card">
+      <h3>Study Compressor</h3>
+      <p>Transforms notes into summaries, flashcards, keywords, and quizzes using AI.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/study-compressor.git" target="_blank">GitHub</a>
+      <a class="btn" href="https://study-compressor.onrender.com" target="_blank">Live ↗</a>
+    </div>
+
+    <div class="card">
+      <h3>PetMatch</h3>
+      <p>A platform that helps users find and adopt pets easily.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/petmatch.git" target="_blank">GitHub</a>
+    </div>
+
+    <div class="card">
+      <h3>Pharm-med</h3>
+      <p>A place to buy pharmacy products online.</p>
+      <a class="btn" href="https://github.com/Selda-Treesa/pharmacy-web.git" target="_blank">GitHub</a>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="certifications">
+  <div class="section-label"><span>Certifications</span></div>
+  <h2>Learning &amp; Growth</h2>
+  <div class="cert-list">
+    <div class="card">
+      <h3>Figma Workshop</h3>
+      <p>Participated in a Figma Workshop conducted by the Computer Science and Engineering Department at MACE as part of Takshak '25 (National-level Tech Fest).</p>
+      <p style="margin-top:10px; font-size:0.78rem; color:#555;">September 8, 2025</p>
+    </div>
+    <div class="card">
+      <h3>Google Cloud Study Jams</h3>
+      <p>Completed hands-on cloud learning sessions under Google Cloud Study Jams, gaining practical exposure to cloud technologies.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="resume">
+  <div class="section-label" style="justify-content:center;"><span>Resume</span></div>
+  <div class="resume-inner">
+    <h2 style="margin-bottom:0;">Download my CV</h2>
+    <p>A snapshot of my skills, projects &amp; experience.</p>
+    <a class="btn-primary" href="/resume.pdf" download>Download Resume</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="contact">
+  <div class="section-label" style="justify-content:center;"><span>Contact</span></div>
+  <h2 style="text-align:center;">Let's connect</h2>
+  <div class="contact-links">
+    <a class="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=seldatreesajose27@gmail.com" target="_blank">📧 Email</a>
+    <a class="btn" href="https://wa.me/919645154573" target="_blank">💬 WhatsApp</a>
+    <a class="btn" href="https://www.linkedin.com/in/selda-treesa-jose-490187391" target="_blank">💼 LinkedIn</a>
+    <a class="btn" href="https://www.instagram.com/selda_treesajose" target="_blank">📸 Instagram</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 <span>Selda</span> · Built with care</p>
+</footer>
+
+<script>
+  // Typing effect with blinking cursor
+  const text = "I build smart, aesthetic, and impactful tech projects.";
+  let i = 0;
+  const el = document.getElementById("typing");
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  el.appendChild(cursor);
+
+  function type() {
+    if (i < text.length) {
+      cursor.insertAdjacentText('beforebegin', text.charAt(i));
+      i++;
+      setTimeout(type, 42);
+    }
+  }
+  setTimeout(type, 900); // wait for fade-in
+</script>
+
+</body>
+</html>
